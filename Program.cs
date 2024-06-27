@@ -1,3 +1,6 @@
+using Dydaktycznie.Data.Dydaktycznie.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace Dydaktycznie
 {
     public class Program
@@ -8,6 +11,8 @@ namespace Dydaktycznie
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 

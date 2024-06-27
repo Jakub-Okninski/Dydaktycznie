@@ -5,7 +5,7 @@
         public int QuizQuestionID { get; set; }
         public int QuizID { get; set; }
         public string Question { get; set; }
-        public ICollection<QuestionAnswer> QuestionAnswers { get; set; }
-
+        public Quiz Quiz { get; set; }
+        public ICollection<QuestionAnswer>? QuestionAnswers { get; set; }
     }
 }
