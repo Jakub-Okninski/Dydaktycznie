@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Dydaktycznie.Models;
 using Dydaktycznie.Data.Dydaktycznie.Models;
+using Mono.TextTemplating;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Dydaktycznie.Controllers
 {
@@ -45,40 +47,66 @@ namespace Dydaktycznie.Controllers
 
             return View(quizQuestion);
         }
-
-        // GET: QuizQuestions/Create
         public IActionResult Create(int quizId)
         {
+            System.Diagnostics.Debug.WriteLine("Errordasdasdasd");
+
             var quizQuestion = new QuizQuestion
             {
                 QuizID = quizId,
-                QuestionAnswers = new List<QuestionAnswer>()
+                QuestionAnswers = new List<QuestionAnswer>
+                {
+                    new QuestionAnswer(),
+                    new QuestionAnswer()
+                }
             };
-
-            // Initial display of two answer fields
-            quizQuestion.QuestionAnswers.Add(new QuestionAnswer());
-            quizQuestion.QuestionAnswers.Add(new QuestionAnswer());
 
             return View(quizQuestion);
         }
-
-        // POST: QuizQuestions/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("QuizID,Question,QuestionAnswers")] QuizQuestion quizQuestion)
         {
+            System.Diagnostics.Debug.WriteLine("Debug: Entered Create POST method");
+
             if (ModelState.IsValid)
             {
-               /* foreach (var answer in quizQuestion.QuestionAnswers)
-                {
-                    _context.Add(answer);
-                }*/
+                // Najpierw zapisuje QuizQuestion do bazy danych
                 _context.Add(quizQuestion);
                 await _context.SaveChangesAsync();
+
+                // Pobiera wygenerowany QuizQuestionID
+                int quizQuestionId = quizQuestion.QuizQuestionID;
+
+                // Przypisuje QuizQuestionID do każdej QuestionAnswer i zapisuje je
+                foreach (var answer in quizQuestion.QuestionAnswers)
+                {
+                    answer.QuizQuestionID = quizQuestionId;
+                    _context.Add(answer);
+                }
+
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction("Details", "Quizs", new { id = quizQuestion.QuizID });
             }
+            else
+            {
+                // Wypisuje błędy walidacji do konsoli debugowania
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error in {state.Key}: {error.ErrorMessage}");
+                    }
+                }
+            }
+
             return View(quizQuestion);
         }
+
+
+
+
 
         // GET: QuizQuestions/Edit/5
         public async Task<IActionResult> Edit(int? id)
