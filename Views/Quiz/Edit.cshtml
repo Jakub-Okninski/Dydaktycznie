@@ -1,0 +1,85 @@
+﻿@model Dydaktycznie.Models.Quiz
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Quiz</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="QuizID" />
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr />
+<div>
+    <h4>Add Question</h4>
+    <form asp-controller="QuizQuestions" asp-action="Create" method="get">
+        <input type="hidden" name="quizId" value="@Model.QuizID" />
+        <button type="submit" class="btn btn-primary">Add Question</button>
+    </form>
+</div>
+<hr />
+
+
+@if (Model.QuizQuestions != null && Model.QuizQuestions.Any())
+{
+    <div>
+        <h4>Questions</h4>
+        <hr />
+        @foreach (var question in Model.QuizQuestions)
+        {
+            <div>
+                <h5>@question.Question</h5>
+                <ul>
+                    @foreach (var answer in question.QuestionAnswers)
+                    {
+                        <li>
+                            @answer.Answer @if (answer.Correct)
+                            {
+                                <span>(Correct)</span>
+                            }
+                        </li>
+                    }
+                </ul>
+                <form asp-action="DeleteQuizQuestions" asp-route-id="@question.QuizQuestionID" method="post">
+                    <input type="submit" value="Delete" class="btn btn-danger" />
+                </form>
+                <a asp-controller="QuizQuestions" asp-action="Edit" asp-route-id="@question.QuizQuestionID">Edit</a>
+
+
+                <hr />
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No questions found for this quiz.</p>
+}
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

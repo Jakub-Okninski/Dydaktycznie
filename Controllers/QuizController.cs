@@ -10,11 +10,11 @@ using Dydaktycznie.Models;
 
 namespace Dydaktycznie.Controllers
 {
-    public class QuizsController : Controller
+    public class QuizController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public QuizsController(ApplicationDbContext context)
+        public QuizController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -26,6 +26,7 @@ namespace Dydaktycznie.Controllers
         }
 
         // GET: Quizs/Details/5
+        // GET: Quizs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,11 +35,18 @@ namespace Dydaktycznie.Controllers
             }
 
             var quiz = await _context.Quizzes
-                .FirstOrDefaultAsync(m => m.QuizID == id);
+                                  .Include(q => q.QuizQuestions)
+                                      .ThenInclude(qq => qq.QuestionAnswers) // Include QuestionAnswers related to QuizQuestions
+                                  .FirstOrDefaultAsync(m => m.QuizID == id);
+
+
             if (quiz == null)
             {
                 return NotFound();
             }
+
+            // At this point, quiz.QuizQuestions should be loaded if there are any related to this quiz
+            // You can safely access quiz.QuizQuestions.Count here
 
             return View(quiz);
         }
@@ -73,7 +81,10 @@ namespace Dydaktycznie.Controllers
                 return NotFound();
             }
 
-            var quiz = await _context.Quizzes.FindAsync(id);
+            var quiz = await _context.Quizzes
+                                     .Include(q => q.QuizQuestions)
+                                         .ThenInclude(qq => qq.QuestionAnswers) // Include QuestionAnswers related to QuizQuestions
+                                     .FirstOrDefaultAsync(m => m.QuizID == id);
             if (quiz == null)
             {
                 return NotFound();
@@ -148,7 +159,19 @@ namespace Dydaktycznie.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
+        // POST: QuizQuestions/Delete/5
+        [HttpPost, ActionName("DeleteQuizQuestions")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmedQuestion(int id)
+        {
+            var quizQuestion = await _context.QuizQuestions.FindAsync(id);
+            if (quizQuestion != null)
+            {
+                _context.QuizQuestions.Remove(quizQuestion);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
         private bool QuizExists(int id)
         {
             return _context.Quizzes.Any(e => e.QuizID == id);

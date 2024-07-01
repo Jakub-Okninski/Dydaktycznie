@@ -47,51 +47,40 @@ namespace Dydaktycznie.Controllers
 
             return View(quizQuestion);
         }
-        public IActionResult Create(int quizId)
+        public async Task<IActionResult> Create(int quizId)
         {
-            System.Diagnostics.Debug.WriteLine("Errordasdasdasd");
-
             var quizQuestion = new QuizQuestion
             {
-                QuizID = quizId,
-                QuestionAnswers = new List<QuestionAnswer>
-                {
-                    new QuestionAnswer(),
-                    new QuestionAnswer()
-                }
+                Quiz = await _context.Quizzes.FirstOrDefaultAsync(m => m.QuizID == quizId),
+                QuestionAnswers = new List<QuestionAnswer>()
             };
+            quizQuestion.QuestionAnswers.Add(new QuestionAnswer());
+            quizQuestion.QuestionAnswers.Add(new QuestionAnswer());
 
             return View(quizQuestion);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("QuizID,Question,QuestionAnswers")] QuizQuestion quizQuestion)
         {
-            System.Diagnostics.Debug.WriteLine("Debug: Entered Create POST method");
+
+            System.Diagnostics.Debug.WriteLine("Dipda");
 
             if (ModelState.IsValid)
             {
-                // Najpierw zapisuje QuizQuestion do bazy danych
-                _context.Add(quizQuestion);
+                System.Diagnostics.Debug.WriteLine($"Error in gfdgfdg");
+
+        
+
+                _context.QuizQuestions.Add(quizQuestion);
                 await _context.SaveChangesAsync();
 
-                // Pobiera wygenerowany QuizQuestionID
-                int quizQuestionId = quizQuestion.QuizQuestionID;
-
-                // Przypisuje QuizQuestionID do każdej QuestionAnswer i zapisuje je
-                foreach (var answer in quizQuestion.QuestionAnswers)
-                {
-                    answer.QuizQuestionID = quizQuestionId;
-                    _context.Add(answer);
-                }
-
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Details", "Quizs", new { id = quizQuestion.QuizID });
+                // Przekierowanie do szczegółów quizu lub innej strony
+                return RedirectToAction("Details", "Quiz", new { id = quizQuestion.QuizID });
             }
             else
             {
-                // Wypisuje błędy walidacji do konsoli debugowania
                 foreach (var state in ModelState)
                 {
                     foreach (var error in state.Value.Errors)
@@ -101,8 +90,10 @@ namespace Dydaktycznie.Controllers
                 }
             }
 
+            // Return the view with the same model to display validation errors
             return View(quizQuestion);
         }
+
 
 
 
@@ -111,6 +102,8 @@ namespace Dydaktycznie.Controllers
         // GET: QuizQuestions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            System.Diagnostics.Debug.WriteLine($"Edas  Edycja");
+
             if (id == null)
             {
                 return NotFound();
@@ -121,8 +114,13 @@ namespace Dydaktycznie.Controllers
                 .FirstOrDefaultAsync(m => m.QuizQuestionID == id);
             if (quizQuestion == null)
             {
+                System.Diagnostics.Debug.WriteLine("dasdasda llalala Edycja");
+
                 return NotFound();
             }
+            System.Diagnostics.Debug.WriteLine($"Edas  dsa2343Edycja");
+            System.Diagnostics.Debug.WriteLine(quizQuestion.QuizID);
+
             return View(quizQuestion);
         }
 
@@ -154,7 +152,7 @@ namespace Dydaktycznie.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Details), new { id = quizQuestion.QuizID });
+                return RedirectToAction(nameof(Details), new { id = quizQuestion.QuizQuestionID });
             }
             return View(quizQuestion);
         }
@@ -192,7 +190,7 @@ namespace Dydaktycznie.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
-
+     
         private bool QuizQuestionExists(int id)
         {
             return _context.QuizQuestions.Any(e => e.QuizQuestionID == id);

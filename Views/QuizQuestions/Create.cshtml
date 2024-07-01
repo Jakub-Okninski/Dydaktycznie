@@ -10,33 +10,30 @@
     <div class="col-md-6">
         <form asp-controller="QuizQuestions" asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="QuizID" />
             <div class="form-group">
-                <label asp-for="QuizID" class="control-label">Quiz ID</label>
-                <input asp-for="QuizID" class="form-control" readonly />
-                <span asp-validation-for="QuizID" class="text-danger"></span>
+                <label asp-for="Quiz.Title" class="control-label">Quiz Title</label>
+                <input asp-for="Quiz.Title" class="form-control" readonly />
             </div>
+
             <div class="form-group">
                 <label asp-for="Question" class="control-label">Question</label>
                 <input asp-for="Question" class="form-control" />
                 <span asp-validation-for="Question" class="text-danger"></span>
             </div>
 
-            <!-- Dynamic field generation for Question Answers -->
             <h4>Question Answers:</h4>
             <div id="answers-container">
-                <div class="form-group">
-                    <label for="QuestionAnswers[0].Answer">Answer 1:</label>
-                    <input type="text" id="QuestionAnswers[0].Answer" name="QuestionAnswers[0].Answer" class="form-control" required />
-                    <input type="checkbox" id="QuestionAnswers[0].Correct" name="QuestionAnswers[0].Correct" value="true" />
-                    <label for="QuestionAnswers[0].Correct">Correct</label>
-                </div>
-                <div class="form-group">
-                    <label for="QuestionAnswers[1].Answer">Answer 2:</label>
-                    <input type="text" id="QuestionAnswers[1].Answer" name="QuestionAnswers[1].Answer" class="form-control" required />
-                    <input type="checkbox" id="QuestionAnswers[1].Correct" name="QuestionAnswers[1].Correct" value="true" />
-                    <label for="QuestionAnswers[1].Correct">Correct</label>
-                </div>
-                <!-- Additional answers will be added dynamically -->
+                @for (var i = 0; i < Model.QuestionAnswers.Count; i++)
+                {
+                    <div class="form-group">
+                        <label asp-for="@Model.QuestionAnswers[i].Answer" class="control-label">Answer @(i + 1):</label>
+                        <input asp-for="@Model.QuestionAnswers[i].Answer" class="form-control" required />
+                        <input type="checkbox" asp-for="@Model.QuestionAnswers[i].Correct" />
+                        <label class="control-label">Correct</label>
+                    </div>
+                }
             </div>
 
             <button type="button" id="add-answer" class="btn btn-primary">Add Answer</button>
@@ -51,9 +48,7 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            var answerIndex = 2; // Starting index for additional answers
-
-            // Function to add new answer input fields
+            var answerIndex = @Model.QuestionAnswers.Count; 
             $("#add-answer").click(function () {
                 var newAnswerHtml =
                     '<div class="form-group">' +
