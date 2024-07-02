@@ -20,7 +20,7 @@ namespace Dydaktycznie.Controllers
         }
 
       
-        public async Task<IActionResult> Index(string sortOrder)
+        public async Task<IActionResult> Index(string? sortOrder, string? searchString, DateTime? startDate, DateTime? endDate)
         {
             ViewData["TitleSortParam"] = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
             ViewData["DateSortParam"] = sortOrder == "date_asc" ? "date_desc" : "date_asc";
@@ -29,7 +29,34 @@ namespace Dydaktycznie.Controllers
             ViewData["NameSortParam"] = sortOrder == "name_asc" ? "name_desc" : "name_asc";
             ViewData["StatusSortParam"] = sortOrder == "status_asc" ? "status_desc" : "status_asc";
 
+
+
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["StartDateFilter"] = startDate;
+            ViewData["EndDateFilter"] = endDate;
+
+
+            // Initialize presentations query
             IQueryable<Presentation> presentations = _context.Presentations.Include(p => p.Category);
+
+            // Apply filters
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                presentations = presentations.Where(p => p.Title.Contains(searchString));
+            }
+
+            if (startDate != null)
+            {
+                presentations = presentations.Where(p => p.CreationDate >= startDate);
+            }
+
+            if (endDate != null)
+            {
+                presentations = presentations.Where(p => p.CreationDate <= endDate);
+            }
+
+        
+
 
             if (sortOrder == "title_desc")
             {

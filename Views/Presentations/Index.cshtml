@@ -10,6 +10,27 @@
     <a asp-action="Create">Create New</a>
 </p>
 
+<div>
+    <form asp-controller="Presentations" asp-action="Index" method="get">
+        <div>
+            <label for="searchString">Search:</label>
+            <input type="text" id="searchString" name="searchString" value="@ViewData["CurrentFilter"]" />
+        </div>
+        <div>
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" name="startDate" value="@((DateTime?)ViewData["StartDateFilter"] != null ? ((DateTime)ViewData["StartDateFilter"]).ToString("yyyy-MM-dd") : "")" />
+        </div>
+        <div>
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" name="endDate" value="@((DateTime?)ViewData["EndDateFilter"] != null ? ((DateTime)ViewData["EndDateFilter"]).ToString("yyyy-MM-dd") : "")" />
+        </div>
+      
+        <div>
+            <button type="submit">Apply Filters</button>
+            <a asp-action="Index">Clear Filters</a>
+        </div>
+    </form>
+</div>
 <table class="table">
     <thead>
         <tr>
