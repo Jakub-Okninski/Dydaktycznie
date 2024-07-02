@@ -9,63 +9,65 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TitleSortParam"]">@Html.DisplayNameFor(model => model.Title)</a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreationDate)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParam"]">@Html.DisplayNameFor(model => model.CreationDate)</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SlidesCount)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["SlidesCountSortParam"]">@Html.DisplayNameFor(model => model.SlidesCount)</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ViewCount)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["ViewCountSortParam"]">@Html.DisplayNameFor(model => model.ViewCount)</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Category)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParam"]">@Html.DisplayNameFor(model => model.Category.Name)</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.status)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StatusSortParam"]">@Html.DisplayNameFor(model => model.status)</a>
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreationDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SlidesCount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ViewCount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.status)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.PresentationID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PresentationID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PresentationID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreationDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SlidesCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ViewCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.status)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.PresentationID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.PresentationID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.PresentationID">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

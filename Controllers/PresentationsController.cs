@@ -19,12 +19,75 @@ namespace Dydaktycznie.Controllers
             _context = context;
         }
 
-        // GET: Presentations
-        public async Task<IActionResult> Index()
+      
+        public async Task<IActionResult> Index(string sortOrder)
         {
-            var applicationDbContext = _context.Presentations.Include(p => p.Category);
-            return View(await applicationDbContext.ToListAsync());
+            ViewData["TitleSortParam"] = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+            ViewData["DateSortParam"] = sortOrder == "date_asc" ? "date_desc" : "date_asc";
+            ViewData["SlidesCountSortParam"] = sortOrder == "slides_asc" ? "slides_desc" : "slides_asc";
+            ViewData["ViewCountSortParam"] = sortOrder == "view_asc" ? "view_desc" : "view_asc";
+            ViewData["NameSortParam"] = sortOrder == "name_asc" ? "name_desc" : "name_asc";
+            ViewData["StatusSortParam"] = sortOrder == "status_asc" ? "status_desc" : "status_asc";
+
+            IQueryable<Presentation> presentations = _context.Presentations.Include(p => p.Category);
+
+            if (sortOrder == "title_desc")
+            {
+                presentations = presentations.OrderByDescending(p => p.Title);
+            }
+            else if (sortOrder == "title_asc")
+            {
+                presentations = presentations.OrderBy(p => p.Title);
+            }
+            else if (sortOrder == "date_asc")
+            {
+                presentations = presentations.OrderBy(p => p.CreationDate);
+            }
+            else if (sortOrder == "date_desc")
+            {
+                presentations = presentations.OrderByDescending(p => p.CreationDate);
+            }
+            else if (sortOrder == "slides_asc")
+            {
+                presentations = presentations.OrderBy(p => p.SlidesCount);
+            }
+            else if (sortOrder == "slides_desc")
+            {
+                presentations = presentations.OrderByDescending(p => p.SlidesCount);
+            }
+            else if (sortOrder == "view_asc")
+            {
+                presentations = presentations.OrderBy(p => p.ViewCount);
+            }
+            else if (sortOrder == "view_desc")
+            {
+                presentations = presentations.OrderByDescending(p => p.ViewCount);
+            }
+            else if (sortOrder == "name_asc")
+            {
+                presentations = presentations.OrderBy(p => p.Category.Name);
+            }
+            else if (sortOrder == "name_desc")
+            {
+                presentations = presentations.OrderByDescending(p => p.Category.Name);
+            }
+            else if (sortOrder == "status_asc")
+            {
+                presentations = presentations.OrderBy(p => p.status);
+            }
+            else if (sortOrder == "status_desc")
+            {
+                presentations = presentations.OrderByDescending(p => p.status);
+            }
+            else
+            {
+                presentations = presentations.OrderBy(p => p.Title);
+            }
+
+            return View(await presentations.ToListAsync());
         }
+
+        // Pozostałe metody kontrolera (Create, Edit, Details, Delete) pozostają bez zmian.
 
         // GET: Presentations/Details/5
         public async Task<IActionResult> Details(int? id)
