@@ -18,6 +18,8 @@ namespace Dydaktycznie.Controllers
         public PresentationsController(ApplicationDbContext context)
         {
             _context = context;
+        
+        
         }
 
 
