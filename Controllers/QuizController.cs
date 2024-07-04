@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Dydaktycznie.Models;
 using Dydaktycznie.Data;
+using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Dydaktycznie.Controllers
 {
@@ -37,6 +39,8 @@ namespace Dydaktycznie.Controllers
             var quiz = await _context.Quizzes
                                   .Include(q => q.QuizQuestions)
                                       .ThenInclude(qq => qq.QuestionAnswers) // Include QuestionAnswers related to QuizQuestions
+                                                                .Include(q => q.Author) // Dołączenie autora quizu (użytkownika)
+
                                   .FirstOrDefaultAsync(m => m.QuizID == id);
 
 
@@ -62,22 +66,51 @@ namespace Dydaktycznie.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("QuizID,Title,Description")] Quiz quiz, IFormFile photo)
+        public async Task<IActionResult> Create([Bind("QuizID,Title,Description,AuthorID")] Quiz quiz, IFormFile photo)
         {
+            System.Diagnostics.Debug.WriteLine($"elooooooooooooooooooooooooooooo");
+
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            System.Diagnostics.Debug.WriteLine(userId);
+
             if (ModelState.IsValid)
             {
-                if (photo != null && photo.Length > 0)
+                System.Diagnostics.Debug.WriteLine($"eloooooooooooooooooooooooooooo2o222");
+
+                try
                 {
-                    using (var memoryStream = new MemoryStream())
+                    // Pobierz Id aktualnie zalogowanego użytkownika
+                     userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    quiz.AuthorID = userId;
+
+                    if (photo != null && photo.Length > 0)
                     {
-                        await photo.CopyToAsync(memoryStream);
-                        quiz.Photo = memoryStream.ToArray(); // Konwersja strumienia na tablicę bajtów i przypisanie do quiz.Photo
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await photo.CopyToAsync(memoryStream);
+                            quiz.Photo = memoryStream.ToArray(); // Konwersja strumienia na tablicę bajtów i przypisanie do quiz.Photo
+                        }
+                    }
+
+                    _context.Add(quiz);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException ex)
+                {
+                    // Możesz tutaj dodać obsługę błędów związanych z bazą danych, jeśli zajdzie taka potrzeba
+                    ModelState.AddModelError("", "Nie udało się zapisać zmian. Spróbuj ponownie.");
+                }
+            }
+            else
+            {
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error in {state.Key}: {error.ErrorMessage}");
                     }
                 }
-
-                _context.Add(quiz);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
             return View(quiz);
         }
@@ -94,6 +127,8 @@ namespace Dydaktycznie.Controllers
             var quiz = await _context.Quizzes
                                      .Include(q => q.QuizQuestions)
                                          .ThenInclude(qq => qq.QuestionAnswers) // Include QuestionAnswers related to QuizQuestions
+                                         .Include(q => q.Author) // Dołączenie autora quizu (użytkownika)
+
                                      .FirstOrDefaultAsync(m => m.QuizID == id);
             if (quiz == null)
             {
@@ -107,7 +142,7 @@ namespace Dydaktycznie.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("QuizID,Title,Description,Photo")] Quiz quiz, IFormFile? photo)
+        public async Task<IActionResult> Edit(int id, [Bind("QuizID,Title,Description,Photo,AuthorID")] Quiz quiz, IFormFile? photo)
         {
             if (id != quiz.QuizID)
             {
@@ -141,6 +176,16 @@ namespace Dydaktycznie.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error in {state.Key}: {error.ErrorMessage}");
+                    }
+                }
             }
             return View(quiz);
         }

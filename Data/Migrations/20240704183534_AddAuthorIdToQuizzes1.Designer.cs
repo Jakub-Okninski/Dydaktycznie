@@ -4,6 +4,7 @@ using Dydaktycznie.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dydaktycznie.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240704183534_AddAuthorIdToQuizzes1")]
+    partial class AddAuthorIdToQuizzes1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,10 +113,6 @@ namespace Dydaktycznie.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuizID"));
 
-                    b.Property<string>("AuthorID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -126,8 +125,6 @@ namespace Dydaktycznie.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("QuizID");
-
-                    b.HasIndex("AuthorID");
 
                     b.ToTable("Quizzes");
                 });
@@ -376,17 +373,6 @@ namespace Dydaktycznie.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("QuizQuestion");
-                });
-
-            modelBuilder.Entity("Dydaktycznie.Models.Quiz", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("Dydaktycznie.Models.QuizQuestion", b =>
