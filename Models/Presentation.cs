@@ -11,6 +11,8 @@
         public int CategoryID { get; set; }
         public Category? Category { get; set; }  
         public Status status { get; set; }
+        public string? FileName { get; set; } // Nowa właściwość dla nazwy pliku
+
 
     }
     public enum Status

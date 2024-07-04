@@ -8,18 +8,22 @@ using Microsoft.EntityFrameworkCore;
 using Dydaktycznie.Models;
 using System.Diagnostics;
 using Dydaktycznie.Data;
+using Microsoft.Extensions.Hosting;
 
 namespace Dydaktycznie.Controllers
 {
     public class PresentationsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public PresentationsController(ApplicationDbContext context)
+
+        public PresentationsController(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
-        
-        
+            _env = env;
+
+
         }
 
 
@@ -182,6 +186,7 @@ namespace Dydaktycznie.Controllers
             ViewData["Categories"] = new SelectList(_context.Categorys, "CategoryID", "Name");
             Presentation presentation = new Presentation();
             presentation.Description = "1";
+            presentation.FileName = "lalal";
             presentation.CreationDate = DateTime.Now;
             presentation.SlidesCount = 1;
             presentation.ViewCount = 1;
@@ -196,7 +201,7 @@ namespace Dydaktycznie.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PresentationID,Title,Description,CreationDate,SlidesCount,ViewCount,CategoryID,status")] Presentation presentation)
+        public async Task<IActionResult> Create([Bind("PresentationID,Title,Description,CreationDate,SlidesCount,ViewCount,CategoryID,status,FileName")] Presentation presentation, IFormFile presentationFile)
         {
 
             System.Diagnostics.Debug.WriteLine($"super prezentacja");
@@ -204,8 +209,35 @@ namespace Dydaktycznie.Controllers
             presentation.CreationDate= DateTime.Now;
             presentation.SlidesCount = new Random().Next(1, 100);
             presentation.ViewCount = new Random().Next(0, 100);
+
             if (ModelState.IsValid)
             {
+
+                if (presentationFile != null && presentationFile.Length > 0)
+                {
+                    // Wygeneruj unikalną nazwę pliku z wykorzystaniem GUID
+                    var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(presentationFile.FileName);
+
+                    // Zapisz nazwę pliku w modelu prezentacji
+                    presentation.FileName = uniqueFileName;
+
+                    string imgPath = Path.Combine(_env.WebRootPath, "img"); // Ścieżka do katalogu wwwroot\img
+
+                    if (!Directory.Exists(imgPath))
+                    {
+                        Directory.CreateDirectory(imgPath);
+                    }
+
+                    var filePath = Path.Combine(imgPath, uniqueFileName); // Pełna ścieżka do pliku
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await presentationFile.CopyToAsync(fileStream);
+                    }
+                }
+
+
+
                 System.Diagnostics.Debug.WriteLine("walidaca");
 
                 _context.Add(presentation);
@@ -224,6 +256,7 @@ namespace Dydaktycznie.Controllers
             }
             ViewData["Categories"] = new SelectList(_context.Categorys, "CategoryID", "Name");
             ViewData["StatusList"] = new SelectList(Enum.GetValues(typeof(Status)));
+                        presentation.FileName = "lalal";
 
             return View(presentation);
         }
@@ -252,7 +285,7 @@ namespace Dydaktycznie.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PresentationID,Title,Description,CreationDate,SlidesCount,ViewCount,CategoryID,status")] Presentation presentation)
+        public async Task<IActionResult> Edit(int id, [Bind("PresentationID,Title,Description,CreationDate,SlidesCount,ViewCount,CategoryID,status,FileName")] Presentation presentation, IFormFile? presentationFile)
         {
 
           
@@ -265,6 +298,48 @@ namespace Dydaktycznie.Controllers
             {
                 try
                 {
+
+
+
+                    if (presentationFile != null && presentationFile.Length > 0)
+                    {
+                        // Wygeneruj unikalną nazwę pliku z wykorzystaniem GUID
+                        var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(presentationFile.FileName);
+
+                        // Ścieżka do katalogu, w którym przechowywane są pliki
+                        string imgPath = Path.Combine(_env.WebRootPath, "img");
+
+                        // Pełna ścieżka do nowego pliku
+                        var newFilePath = Path.Combine(imgPath, uniqueFileName);
+
+
+                        // Zapisz nowy plik na dysku
+                        using (var fileStream = new FileStream(newFilePath, FileMode.Create))
+                        {
+                            await presentationFile.CopyToAsync(fileStream);
+                        }
+
+                        string imgPath2 = Path.Combine(_env.WebRootPath, "img");
+
+                        // Pełna ścieżka do pliku
+                        var filePath2 = Path.Combine(imgPath, presentation.FileName);
+                        // Sprawdź, czy plik istnieje
+                        if (System.IO.File.Exists(filePath2))
+                        {
+                            // Usuń plik z dysku
+                            System.IO.File.Delete(filePath2);
+                        }
+
+
+                        presentation.FileName = uniqueFileName;
+                    }
+                  
+
+
+
+
+
+
                     _context.Update(presentation);
                     await _context.SaveChangesAsync();
                 }
@@ -282,6 +357,9 @@ namespace Dydaktycznie.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CategoryID"] = new SelectList(_context.Categorys, "CategoryID", "CategoryID", presentation.CategoryID);
+
+            ViewData["Categories"] = new SelectList(_context.Categorys, "CategoryID", "Name");
+            ViewData["StatusList"] = new SelectList(Enum.GetValues(typeof(Status)));
             return View(presentation);
         }
 
@@ -312,6 +390,20 @@ namespace Dydaktycznie.Controllers
             var presentation = await _context.Presentations.FindAsync(id);
             if (presentation != null)
             {
+
+                // Ścieżka do katalogu, w którym przechowywane są pliki
+                string imgPath = Path.Combine(_env.WebRootPath, "img");
+
+                // Pełna ścieżka do pliku
+                var filePath = Path.Combine(imgPath, presentation.FileName);
+
+                // Sprawdź, czy plik istnieje
+                if (System.IO.File.Exists(filePath))
+                {
+                    // Usuń plik z dysku
+                    System.IO.File.Delete(filePath);
+                }
+
                 _context.Presentations.Remove(presentation);
             }
 
