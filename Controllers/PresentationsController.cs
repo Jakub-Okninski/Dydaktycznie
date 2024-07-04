@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Dydaktycznie.Data.Dydaktycznie.Models;
 using Dydaktycznie.Models;
+using System.Diagnostics;
 
 namespace Dydaktycznie.Controllers
 {
@@ -20,7 +21,7 @@ namespace Dydaktycznie.Controllers
         }
 
       
-        public async Task<IActionResult> Index(string? sortOrder, string? searchString, DateTime? startDate, DateTime? endDate)
+        public async Task<IActionResult> Index(string? sortOrder, string? searchString, DateTime? startDate, DateTime? endDate, int? categoryId, Status? status, int? slidesCount)
         {
             ViewData["TitleSortParam"] = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
             ViewData["DateSortParam"] = sortOrder == "date_asc" ? "date_desc" : "date_asc";
@@ -34,7 +35,10 @@ namespace Dydaktycznie.Controllers
             ViewData["CurrentFilter"] = searchString;
             ViewData["StartDateFilter"] = startDate;
             ViewData["EndDateFilter"] = endDate;
-
+            ViewData["CategoryIdFilter"] = categoryId;
+            if(status!=null)
+            ViewData["StatusFilter"] = ((int)status).ToString();
+            ViewData["SlidesCountFilter"] = slidesCount;
 
             // Initialize presentations query
             IQueryable<Presentation> presentations = _context.Presentations.Include(p => p.Category);
@@ -55,7 +59,21 @@ namespace Dydaktycznie.Controllers
                 presentations = presentations.Where(p => p.CreationDate <= endDate);
             }
 
-        
+            if (categoryId != null&& categoryId!=-1)
+            {
+                presentations = presentations.Where(p => p.CategoryID == categoryId);
+            }
+
+            if (status != null)
+            {
+                presentations = presentations.Where(p => p.status == status);
+            }
+
+            if (slidesCount != null)
+            {
+                presentations = presentations.Where(p => p.SlidesCount == slidesCount);
+            }
+
 
 
             if (sortOrder == "title_desc")
@@ -110,7 +128,14 @@ namespace Dydaktycznie.Controllers
             {
                 presentations = presentations.OrderBy(p => p.Title);
             }
-
+            ViewData["Categories"] = new SelectList(_context.Categorys, "CategoryID", "Name");
+            ViewData["Statuses"] = new SelectList(Enum.GetValues(typeof(Status))
+                                                    .Cast<Status>()
+                                                    .Select(s => new SelectListItem
+                                                    {
+                                                        Text = s.ToString(),
+                                                        Value = ((int)s).ToString()
+                                                    }), "Value", "Text");
             return View(await presentations.ToListAsync());
         }
 
