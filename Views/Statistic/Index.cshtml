@@ -1,0 +1,27 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Quiz Statistics";
+}
+
+<h1>Quiz Statistics</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Author</th>
+            <th>Number of Quizzes</th>
+            <th>Total Questions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.AuthorName</td>
+                <td>@item.QuizCount</td>
+                <td>@item.TotalQuestions</td>
+            </tr>
+        }
+    </tbody>
+</table>

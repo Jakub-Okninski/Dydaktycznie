@@ -24,7 +24,18 @@ namespace Dydaktycznie.Controllers
         // GET: Quizs
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Quizzes.ToListAsync());
+
+            // Pobierz identyfikator zalogowanego użytkownika
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // Przyjmując, że identyfikatorem zalogowanego użytkownika jest nazwa użytkownika
+
+            // Zapytanie EF Core: Pobierz quizy tylko jeśli są przypisane do zalogowanego użytkownika
+            var quizzes = await _context.Quizzes
+                .Where(q => q.AuthorID == loggedInUserId) // Filtruj quizy na podstawie nazwy użytkownika autora
+                .ToListAsync();
+
+            return View(quizzes);
+
         }
 
         // GET: Quizs/Details/5
