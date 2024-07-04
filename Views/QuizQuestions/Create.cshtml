@@ -3,14 +3,15 @@
 @{
     ViewData["Title"] = "Create";
 }
+<link rel="stylesheet" href="/css/quiz.css" />
 
-<h1>Create Quiz Question</h1>
+<h1>Dodaj Pytanie</h1>
 
 <div class="row">
     <div class="col-md-6">
 
         <div class="form-group">
-            <h3>@Model.Quiz.Title</h3>
+           
         </div>
 
         <form asp-controller="QuizQuestions" asp-action="Create" method="post">
@@ -20,28 +21,30 @@
           
 
             <div class="form-group">
-                <label asp-for="Question" class="control-label">Question</label>
                 <input asp-for="Question" class="form-control" />
                 <span asp-validation-for="Question" class="text-danger"></span>
             </div>
 
-            <h4>Question Answers:</h4>
+            <h4>Odpowiedzi:</h4>
             <div id="answers-container">
                 @for (var i = 0; i < Model.QuestionAnswers.Count; i++)
                 {
                     <div class="form-group">
-                        <label asp-for="@Model.QuestionAnswers[i].Answer" class="control-label">Answer @(i + 1):</label>
+                        <label asp-for="@Model.QuestionAnswers[i].Answer" class="control-label">Odpowiedź @(i + 1):</label>
                         <input asp-for="@Model.QuestionAnswers[i].Answer" class="form-control" required />
                         <input type="checkbox" asp-for="@Model.QuestionAnswers[i].Correct" />
-                        <label class="control-label">Correct</label>
+                        <label class="control-label">Poprawna</label>
                     </div>
                 }
             </div>
-
-            <button type="button" id="add-answer" class="btn btn-primary">Add Answer</button>
+            <div class="odsungora">
+            <button type="button" id="add-answer" class="btn btn-primary">Dodaj Odpowiedź</button>
+            </div>
+            <div class="odsungora">
 
             <div class="form-group">
-                <input type="submit" value="Create Question" class="btn btn-primary" />
+                <input type="submit" value="Stwórz Pytanie" class="btn btn-primary" />
+            </div>
             </div>
         </form>
     </div>

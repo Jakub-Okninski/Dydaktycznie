@@ -4,29 +4,29 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Szczegóły Pytania</h1>
 
 <div>
-    <h4>QuizQuestion</h4>
     <hr />
 
-    <h4 class="col-sm-10">
-            @Html.DisplayFor(model => model.Question)
-        </h6>
+        <h5 class="col-sm-10">
+          Pytanie:  @Html.DisplayFor(model => model.Question)
+        </h5>
 </div>
 
 <div id="answers-container">
     @for (var i = 0; i < Model.QuestionAnswers.Count; i++)
     {
         <div class="form-group">
-            <div class="control-label">Odpowiedz @(i + 1):</div>
-            <span>@Html.DisplayFor(m => m.QuestionAnswers[i].Answer)</span>
+            <h6 class="control-label">Odpowiedz @(i + 1): @Html.DisplayFor(m => m.QuestionAnswers[i].Answer) </h6>
+            
            
         </div>
     }
 </div>
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.QuizQuestionID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="QuizQuestions" asp-action="Edit" asp-route-id="@Model.QuizQuestionID">Edit</a> |
+    <a asp-controller="Quiz" asp-action="Index" asp-route-id="@Model.Quiz.QuizID">Back to List</a>
+
 </div>

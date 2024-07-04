@@ -1,4 +1,5 @@
 ﻿@model Dydaktycznie.Models.Presentation
+@using System.Security.Claims
 
 @{
     ViewData["Title"] = "Create";
@@ -9,6 +10,8 @@
 <hr />
 <div class="row">
     <div class="col-md-6">
+        <input type="text" asp-for="AuthorID" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" /> <!-- Ukryte pole do przechowywania AuthorId -->
+
         <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <!-- Display FileName -->

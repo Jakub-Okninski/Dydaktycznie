@@ -55,6 +55,8 @@
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FileName)
         </dt>
+
+
         <dd class="col-sm-10">
             @if (!string.IsNullOrEmpty(Model.FileName))
             {
@@ -64,6 +66,12 @@
             {
                 <span>No file available</span>
             }
+        </dd>
+        <dt class="col-sm-2">
+            Author Email
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Author.Email) <!-- Założyłem, że w modelu Quiz masz właściwość Author, która ma właściwość Email -->
         </dd>
     </dl>
 </div>

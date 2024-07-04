@@ -1,22 +1,20 @@
 ﻿@model IEnumerable<Dydaktycznie.Models.Quiz>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Moje Quizy";
 }
 
-<h1>Index</h1>
+<h1>Moje Quizy</h1>
+<h4><a asp-action="Create">Stwórz Nowy Quiz</a></h4>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+               Tytuł
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+               Opis
             </th>
             <th></th>
         </tr>
@@ -34,8 +32,6 @@
                 <a asp-action="Edit" asp-route-id="@item.QuizID">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.QuizID">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.QuizID">Delete</a>
-
-
             </td>
         </tr>
 }

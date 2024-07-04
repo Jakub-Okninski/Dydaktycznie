@@ -3,64 +3,83 @@
 @{
     ViewData["Title"] = "Details";
 }
+<link rel="stylesheet" href="/css/quiz.css" />
 
 <h1>Details</h1>
 
 <div>
-    <h4>Quiz</h4>
+    <h4>
+        Quiz: @Html.DisplayFor(model => model.Title)
+    </h4>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Photo)
-        </dt>
-        <dd class="col-sm-10">
-            @if (Model.Photo != null && Model.Photo.Length > 0)
-            {
-                string imageBase64 = Convert.ToBase64String(Model.Photo);
-                string imageDataURL = string.Format("data:image/png;base64,{0}", imageBase64);
-                <img src="@imageDataURL" alt="Quiz Photo" class="img-fluid" />
-            }
-            else
-            {
-                <p>No photo available.</p>
-            }
-        </dd>
-        <dt class="col-sm-2">
-            Author Email
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Author.Email) <!-- Założyłem, że w modelu Quiz masz właściwość Author, która ma właściwość Email -->
-        </dd>
+
+        <div class="grupowanie">
+
+            <div>
+
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Title)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Title)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Description)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Description)
+                </dd>
+                <dt class="col-sm-2">
+                    Author Email
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Author.Email)
+                </dd>
+
+            </div>
+           <div>
+                <dt class="col-sm-2">
+                    
+                </dt>
+                <dd class="col-sm-10">
+                    @if (Model.Photo != null && Model.Photo.Length > 0)
+                    {
+                        string imageBase64 = Convert.ToBase64String(Model.Photo);
+                        string imageDataURL = string.Format("data:image/png;base64,{0}", imageBase64);
+                        <img src="@imageDataURL" alt="Quiz Photo" class="img-fluid" />
+                    }
+                    else
+                    {
+                        <p>No photo available.</p>
+                    }
+                </dd>
+           </div>
+        </div>
+
     </dl>
 </div>
-
+<hr />
+<h4>Pytania: </h4>
 @if (Model.QuizQuestions != null && Model.QuizQuestions.Any())
 {
     <div>
-        <h4>Questions</h4>
         <hr />
         @foreach (var question in Model.QuizQuestions)
         {
             <div>
-
-                <a href="/QuizQuestions/Details/@question.QuizQuestionID"> <h5>@question.Question</h5></a>
-
+                <h6>
+                    Pytanie: <a href="/QuizQuestions/Details/@question.QuizQuestionID"> <span>@question.Question</span></a>
+                </h6>
+                @{
+                    int answerCounter = 1;
+                }
                 <ul>
                     @foreach (var answer in question.QuestionAnswers)
                     {
-                        <li>@answer.Answer</li>
+                        <span>Odpowiedz: @answerCounter:  @answer.Answer</span><br/>
+                        answerCounter++;
+
                     }
                 </ul>
 

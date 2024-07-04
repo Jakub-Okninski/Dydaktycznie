@@ -9,6 +9,7 @@ using Dydaktycznie.Models;
 using System.Diagnostics;
 using Dydaktycznie.Data;
 using Microsoft.Extensions.Hosting;
+using System.Security.Claims;
 
 namespace Dydaktycznie.Controllers
 {
@@ -92,6 +93,11 @@ namespace Dydaktycznie.Controllers
             }
 
 
+            // Pobierz identyfikator zalogowanego użytkownika
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // Przyjmując, że identyfikatorem zalogowanego użytkownika jest nazwa użytkownika
+
+           
 
             if (sortOrder == "title_desc")
             {
@@ -171,6 +177,7 @@ namespace Dydaktycznie.Controllers
 
             var presentation = await _context.Presentations
                 .Include(p => p.Category)
+                .Include(q => q.Author)
                 .FirstOrDefaultAsync(m => m.PresentationID == id);
             if (presentation == null)
             {
@@ -189,6 +196,7 @@ namespace Dydaktycznie.Controllers
             presentation.FileName = "lalal";
             presentation.CreationDate = DateTime.Now;
             presentation.SlidesCount = 1;
+            presentation.FileName = "AuthorID";
             presentation.ViewCount = 1;
             presentation.status = Status.draft;
             return View(presentation);
@@ -201,7 +209,7 @@ namespace Dydaktycznie.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PresentationID,Title,Description,CreationDate,SlidesCount,ViewCount,CategoryID,status,FileName")] Presentation presentation, IFormFile presentationFile)
+        public async Task<IActionResult> Create([Bind("PresentationID,Title,Description,CreationDate,SlidesCount,ViewCount,CategoryID,status,FileName,AuthorID")] Presentation presentation, IFormFile presentationFile)
         {
 
             System.Diagnostics.Debug.WriteLine($"super prezentacja");
@@ -212,7 +220,8 @@ namespace Dydaktycznie.Controllers
 
             if (ModelState.IsValid)
             {
-
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                presentation.AuthorID = userId;
                 if (presentationFile != null && presentationFile.Length > 0)
                 {
                     // Wygeneruj unikalną nazwę pliku z wykorzystaniem GUID
@@ -285,7 +294,7 @@ namespace Dydaktycznie.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PresentationID,Title,Description,CreationDate,SlidesCount,ViewCount,CategoryID,status,FileName")] Presentation presentation, IFormFile? presentationFile)
+        public async Task<IActionResult> Edit(int id, [Bind("PresentationID,Title,Description,CreationDate,SlidesCount,ViewCount,CategoryID,status,FileName,AuthorID")] Presentation presentation, IFormFile? presentationFile)
         {
 
           

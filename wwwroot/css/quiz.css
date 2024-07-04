@@ -1,0 +1,92 @@
+﻿/* Stylizacja dla całego formularza */
+.form-control {
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+/* Stylizacja dla przycisków */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+    .btn-primary:hover {
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+
+/* Stylizacja dla obrazków */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+}
+
+/* Stylizacja dla nagłówków i odstępów */
+h1, h4, h5 {
+    margin-top: 20px;
+}
+
+hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Dodatkowe style dla klasy .grupowanie */
+.grupowanie {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+    .grupowanie > div {
+        width: 48%; /* Ustawienie szerokości dla lewej i prawej części */
+    }
+
+/* Stylizacja dla komunikatów błędów walidacji */
+.field-validation-error {
+    color: red;
+}
+
+/* Dodatkowe style dla listy pytań i odpowiedzi */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+    ul li {
+        margin-bottom: 5px;
+    }
+
+        ul li span {
+            color: green;
+        }
+
+/* Stylizacja dla linków powrotu */
+a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+    a:hover {
+        color: #0056b3;
+    }
+
+
+.odsun{
+    margin-left:10px;
+}
+.odsungora {
+    margin-top: 10px;
+}

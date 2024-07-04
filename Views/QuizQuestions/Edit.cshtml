@@ -4,9 +4,8 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>Edytuj Pytanie</h1>
 
-<h4>QuizQuestion</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -21,7 +20,7 @@
                 <span asp-validation-for="Question" class="text-danger"></span>
             </div>
 
-            <h4>Question Answers:</h4>
+            <h4>Odpowiedzi: :</h4>
             <div id="answers-container">
                 @for (var i = 0; i < Model.QuestionAnswers.Count; i++)
                 {
@@ -34,12 +33,12 @@
                     </div>
 
                     <a class="btn btn-danger" asp-controller="QuestionAnswers" asp-action="Delete" asp-route-id="@Model.QuestionAnswers[i].QuestionAnswerID">Delete</a>
-
+                    <hr />
                 }
             </div>
-
+            <br/>
             <button type="button" id="add-answer" class="btn btn-secondary">Add Answer</button>
-
+            <br />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

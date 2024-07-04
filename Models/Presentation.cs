@@ -13,9 +13,9 @@ namespace Dydaktycznie.Models
         public int CategoryID { get; set; }
         public Category? Category { get; set; }  
         public Status status { get; set; }
-        public string? FileName { get; set; } // Nowa właściwość dla nazwy pliku
-        public IdentityUser? Author { get; set; } // Opcjonalnie: obiekt użytkownika jako autor
-        public string AuthorID { get; set; } // Identyfikator autora quizu
+        public string? FileName { get; set; } 
+        public IdentityUser? Author { get; set; } 
+        public string? AuthorID { get; set; } 
 
     }
     public enum Status
