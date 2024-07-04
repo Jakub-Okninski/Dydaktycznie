@@ -1,0 +1,63 @@
+﻿@model Dydaktycznie.Models.Quiz
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Quiz</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+    </dl>
+</div>
+
+@if (Model.QuizQuestions != null && Model.QuizQuestions.Any())
+{
+    <div>
+        <h4>Questions</h4>
+        <hr />
+        @foreach (var question in Model.QuizQuestions)
+        {
+            <div>
+
+                <a href="/QuizQuestions/Details/@question.QuizQuestionID"> <h5>@question.Question</h5></a>
+
+                <ul>
+                    @foreach (var answer in question.QuestionAnswers)
+                    {
+                        <li>@answer.Answer</li>
+                    }
+                </ul>
+
+               
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>
+        Nie znaleziono pytań do tego quizu.
+    </p>
+}
+
+
+
+<hr />
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

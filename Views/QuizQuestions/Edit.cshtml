@@ -1,0 +1,76 @@
+﻿@model Dydaktycznie.Models.QuizQuestion
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>QuizQuestion</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="QuizQuestionID" />
+            <input type="hidden" asp-for="QuizID" />
+
+            <div class="form-group">
+                <label asp-for="Question" class="control-label">Question</label>
+                <input asp-for="Question" class="form-control" />
+                <span asp-validation-for="Question" class="text-danger"></span>
+            </div>
+
+            <h4>Question Answers:</h4>
+            <div id="answers-container">
+                @for (var i = 0; i < Model.QuestionAnswers.Count; i++)
+                {
+                    <div class="form-group">
+                        <input type="hidden" asp-for="@Model.QuestionAnswers[i].QuestionAnswerID" />
+                        <label asp-for="@Model.QuestionAnswers[i].Answer" class="control-label">Answer @(i + 1):</label>
+                        <input asp-for="@Model.QuestionAnswers[i].Answer" class="form-control" required />
+                        <input type="checkbox" asp-for="@Model.QuestionAnswers[i].Correct" />
+                        <label class="control-label">Correct</label>
+                    </div>
+
+                    <a class="btn btn-danger" asp-controller="QuestionAnswers" asp-action="Delete" asp-route-id="@Model.QuestionAnswers[i].QuestionAnswerID">Delete</a>
+
+                }
+            </div>
+
+            <button type="button" id="add-answer" class="btn btn-secondary">Add Answer</button>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var answerIndex = @Model.QuestionAnswers.Count;
+
+            $("#add-answer").click(function () {
+                var newAnswerIndex = answerIndex++;
+                var newAnswerHtml =
+                    '<div class="form-group">' +
+                    '   <input type="hidden" name="QuestionAnswers[' + newAnswerIndex + '].QuestionAnswerID" value="0" />' +
+                    '   <label class="control-label">New Answer:</label>' +
+                    '   <input type="text" name="QuestionAnswers[' + newAnswerIndex + '].Answer" class="form-control" required />' +
+                    '   <input type="checkbox" name="QuestionAnswers[' + newAnswerIndex + '].Correct" />' +
+                    '   <label class="control-label">Correct</label>' +
+                    '</div>';
+
+                $("#answers-container").append(newAnswerHtml);
+            });
+        });
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

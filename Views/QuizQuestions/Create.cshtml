@@ -1,0 +1,68 @@
+﻿@model Dydaktycznie.Models.QuizQuestion
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create Quiz Question</h1>
+
+<div class="row">
+    <div class="col-md-6">
+
+        <div class="form-group">
+            <h3>@Model.Quiz.Title</h3>
+        </div>
+
+        <form asp-controller="QuizQuestions" asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="QuizID" />
+          
+
+            <div class="form-group">
+                <label asp-for="Question" class="control-label">Question</label>
+                <input asp-for="Question" class="form-control" />
+                <span asp-validation-for="Question" class="text-danger"></span>
+            </div>
+
+            <h4>Question Answers:</h4>
+            <div id="answers-container">
+                @for (var i = 0; i < Model.QuestionAnswers.Count; i++)
+                {
+                    <div class="form-group">
+                        <label asp-for="@Model.QuestionAnswers[i].Answer" class="control-label">Answer @(i + 1):</label>
+                        <input asp-for="@Model.QuestionAnswers[i].Answer" class="form-control" required />
+                        <input type="checkbox" asp-for="@Model.QuestionAnswers[i].Correct" />
+                        <label class="control-label">Correct</label>
+                    </div>
+                }
+            </div>
+
+            <button type="button" id="add-answer" class="btn btn-primary">Add Answer</button>
+
+            <div class="form-group">
+                <input type="submit" value="Create Question" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var answerIndex = @Model.QuestionAnswers.Count; 
+            $("#add-answer").click(function () {
+                var newAnswerHtml =
+                    '<div class="form-group">' +
+                    '   <label for="QuestionAnswers[' + answerIndex + '].Answer">Answer ' + (answerIndex + 1) + ':</label>' +
+                    '   <input type="text" id="QuestionAnswers[' + answerIndex + '].Answer" name="QuestionAnswers[' + answerIndex + '].Answer" class="form-control" required />' +
+                    '   <input type="checkbox" id="QuestionAnswers[' + answerIndex + '].Correct" name="QuestionAnswers[' + answerIndex + '].Correct" value="true" />' +
+                    '   <label for="QuestionAnswers[' + answerIndex + '].Correct">Correct</label>' +
+                    '</div>';
+
+                $("#answers-container").append(newAnswerHtml);
+                answerIndex++;
+            });
+        });
+    </script>
+}
