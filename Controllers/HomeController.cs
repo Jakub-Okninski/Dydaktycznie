@@ -1,5 +1,7 @@
+using Dydaktycznie.Data;
 using Dydaktycznie.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace Dydaktycznie.Controllers
@@ -7,16 +9,35 @@ namespace Dydaktycznie.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
+
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var quizzes = await _context.Quizzes.ToListAsync();
+            return View(quizzes);
         }
+        public async Task<IActionResult> MiniQuiz(int id)
+        {
+            var quiz = await _context.Quizzes
+                .Include(q => q.QuizQuestions) 
+                    .ThenInclude(qq => qq.QuestionAnswers) 
+                .FirstOrDefaultAsync(q => q.QuizID == id);
+
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+
+            return PartialView("MiniQuiz", quiz);
+        }
+
 
         public IActionResult Privacy()
         {

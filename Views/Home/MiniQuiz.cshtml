@@ -1,0 +1,80 @@
+﻿@model Dydaktycznie.Models.Quiz
+
+<h2>@Model.Title - Mini Quiz</h2>
+
+<form id="quiz-form">
+    @foreach (var question in Model.QuizQuestions)
+    {
+        <h4>@question.Question</h4>
+
+        <ul>
+            @foreach (var answer in question.QuestionAnswers)
+            {
+                <li>
+                    <input type="checkbox" name="answer_@question.QuizQuestionID" value="@answer.QuestionAnswerID" onchange="updateCounts()" />
+                    @answer.Answer
+                </li>
+            }
+        </ul>
+    }
+
+    <button type="button" onclick="checkAnswers()" id="check-answers-btn">Sprawdź odpowiedzi</button>
+    <button type="submit" style="display: none;" id="submit-quiz-btn">Wyślij Mini Quiz</button>
+</form>
+
+<div id="quiz-results" style="display: none;">
+    <h3>Wyniki Quizu</h3>
+    <p>Liczba poprawnych odpowiedzi: <span id="correct-count">0</span></p>
+    <p>Liczba niepoprawnych odpowiedzi: <span id="incorrect-count">0</span></p>
+</div>
+
+<script>
+    function checkAnswers() {
+        var correctCount = 0;
+        var incorrectCount = 0;
+        var quizQuestions = @Html.Raw(Json.Serialize(Model.QuizQuestions)); // Pobranie pytań z modelu
+
+        // Pętla przez każde pytanie
+        for (var q = 0; q < quizQuestions.length; q++) {
+            var question = quizQuestions[q];
+            var isAnyChecked = false;
+
+            // Pętla przez odpowiedzi danego pytania
+            for (var a = 0; a < question.QuestionAnswers.length; a++) {
+                var answer = question.QuestionAnswers[a];
+                var checkbox = document.getElementsByName('answer_' + question.QuizQuestionID);
+
+                for (var i = 0; i < checkbox.length; i++) {
+                    if (checkbox[i].checked && checkbox[i].value == answer.QuestionAnswerID) {
+                        isAnyChecked = true;
+
+                        // Sprawdzenie czy odpowiedź jest poprawna
+                        var isCorrect = answer.Correct; // Pobranie wartości bool z modelu JavaScript
+                        if (isCorrect) {
+                            correctCount++;
+                        } else {
+                            incorrectCount++;
+                        }
+                    }
+                }
+            }
+
+            // Obsługa braku zaznaczenia odpowiedzi dla pytania
+            if (!isAnyChecked) {
+                // Obsługa błędu, np. wyświetlenie alertu
+                alert('Proszę zaznacz odpowiedź dla pytania: "' + question.Question + '"');
+                return; // Zakończ funkcję wcześniej
+            }
+        }
+
+        // Aktualizacja UI z wynikami
+        document.getElementById('correct-count').textContent = correctCount;
+        document.getElementById('incorrect-count').textContent = incorrectCount;
+
+        // Pokaż wyniki quizu
+        document.getElementById('quiz-results').style.display = 'block';
+        // Pokaż przycisk submit (opcjonalnie)
+        document.getElementById('submit-quiz-btn').style.display = 'block';
+    }
+</script>
+

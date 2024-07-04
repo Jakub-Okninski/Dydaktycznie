@@ -1,85 +1,96 @@
 ﻿@model PaginatedList<Dydaktycznie.Models.Presentation>
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-
+<h1>Prezentacje</h1>
+@if (SignInManager.IsSignedIn(User))
+{
+    <h4><a asp-action="Create">Stwórz Nowy Quiz</a></h4>
+}
+<link rel="stylesheet" href="/css/quiz.css" />
 <div>
     <form asp-controller="Presentations" asp-action="Index" method="get">
-        <div>
-            <label for="searchString">Search:</label>
-            <input type="text" id="searchString" name="searchString" value="@ViewData["CurrentFilter"]" />
-        </div>
-        <div>
-            <label for="startDate">Start Date:</label>
-            <input type="date" id="startDate" name="startDate" value="@((DateTime?)ViewData["StartDateFilter"] != null ? ((DateTime)ViewData["StartDateFilter"]).ToString("yyyy-MM-dd") : "")" />
-        </div>
-        <div>
-            <label for="endDate">End Date:</label>
-            <input type="date" id="endDate" name="endDate" value="@((DateTime?)ViewData["EndDateFilter"] != null ? ((DateTime)ViewData["EndDateFilter"]).ToString("yyyy-MM-dd") : "")" />
-        </div>
-    <div>
-        <label for="categoryId">Category:</label>
-        <select id="categoryId" name="categoryId" class="form-control">
-            <option value="">All</option>
-            @if (ViewData["Categories"] != null)
-            {
-                foreach (var category in (SelectList)ViewData["Categories"])
+       
+        <div class="grupowanie">
+            <div>
+                Tytuł:
+                <br />
+                <input type="text" id="searchString" name="searchString" value="@ViewData["CurrentFilter"]" />
+            </div>
+            <div>
+                <label for="startDate">Od: </label>
+                <input type="date" id="startDate" name="startDate" value="@((DateTime?)ViewData["StartDateFilter"] != null ? ((DateTime)ViewData["StartDateFilter"]).ToString("yyyy-MM-dd") : "")" /><br/>
+                <label for="endDate">Do: </label>
+                <input type="date" id="endDate" name="endDate" value="@((DateTime?)ViewData["EndDateFilter"] != null ? ((DateTime)ViewData["EndDateFilter"]).ToString("yyyy-MM-dd") : "")" />
+            </div>
+         
+            <div>
+                Max Slajd:<br />
+                <input type="number" id="slidesCount" name="slidesCount" value="@ViewData["SlidesCountFilter"]" />
+            </div>
+            <div>
+                Kategoria:
+                <br />
+            <select id="categoryId" name="categoryId" >
+                <option value="">All</option>
+                @if (ViewData["Categories"] != null)
                 {
-                        @if (category.Value.ToString() == ViewData["CategoryIdFilter"]?.ToString())
+                    foreach (var category in (SelectList)ViewData["Categories"])
+                    {
+                            @if (category.Value.ToString() == ViewData["CategoryIdFilter"]?.ToString())
+                            {
+                                <option selected value="@category.Value" )>@category.Text</option>
+
+                            }
+                            @if (category.Value.ToString() != ViewData["CategoryIdFilter"]?.ToString())
+                            {
+                                <option value="@category.Value" )>@category.Text</option>
+
+                            }
+                    }
+                }
+            </select>
+            </div>
+            <div>
+                Status:
+                <br/>
+
+                <select id="status" name="status" >
+                    <option value="">All</option>
+                    @if (ViewData["Statuses"] != null)
+                    {
+                        foreach (var status in (SelectList)ViewData["Statuses"])
                         {
-                            <option selected value="@category.Value" )>@category.Text</option>
+
+
+                            @if (status.Value == ViewData["StatusFilter"])
+                            {
+                                <option selected value="@status.Value")>@status.Text</option>
+
+                            }
+                            @if (status.Value != ViewData["StatusFilter"])
+                            {
+
+                                <option value="@status.Value")>@status.Text</option>
+
+                            }
 
                         }
-                        @if (category.Value.ToString() != ViewData["CategoryIdFilter"]?.ToString())
-                        {
-                            <option value="@category.Value" )>@category.Text</option>
-
-                        }
-                }
-            }
-        </select>
-    </div>
-        <div>
-            <label for="slidesCount">Slides Count:</label>
-            <input type="number" id="slidesCount" name="slidesCount" value="@ViewData["SlidesCountFilter"]" />
-        </div>
-    <div>
-        <label for="status">Status:</label>
-        <select id="status" name="status" class="form-control">
-            <option value="">All</option>
-            @if (ViewData["Statuses"] != null)
-            {
-                foreach (var status in (SelectList)ViewData["Statuses"])
-                {
-
-
-                    @if (status.Value == ViewData["StatusFilter"])
-                    {
-                        <option selected value="@status.Value")>@status.Text</option>
-
                     }
-                    @if (status.Value != ViewData["StatusFilter"])
-                    {
-
-                        <option value="@status.Value")>@status.Text</option>
-
-                    }
-
-                }
-            }
-        </select>
-    </div>
-        <div>
-            <button type="submit">Apply Filters</button>
-            <a asp-action="Index">Clear Filters</a>
+                </select>
+            </div>
         </div>
+                <div>
+                    <button type="submit">Filtruj</button>
+                    <a asp-action="Index">Czyść</a>
+                </div>
+        <div>
     </form>
 </div>
 
@@ -141,9 +152,19 @@
                     @Html.DisplayFor(modelItem => item.status)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.PresentationID">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.PresentationID">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.PresentationID">Delete</a>
+        
+                    @if (User.Identity.IsAuthenticated && item.AuthorID == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                    {
+                        <a asp-action="Details" asp-route-id="@item.PresentationID">Szczegóły</a>
+                        <a asp-action="Edit" asp-route-id="@item.PresentationID">Edycja</a>
+                        <a asp-action="Delete" asp-route-id="@item.PresentationID">Usuń</a>
+
+                    }
+                    else
+                    {
+                        <a asp-action="Details" asp-route-id="@item.PresentationID">Szczegóły</a>
+
+                    }
                 </td>
             </tr>
         }

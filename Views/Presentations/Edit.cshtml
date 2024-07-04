@@ -3,10 +3,10 @@
 @{
     ViewData["Title"] = "Edit";
 }
+<link rel="stylesheet" href="/css/quiz.css" />
 
-<h1>Edit</h1>
+<h1>Edytuj Prezentacje</h1>
 
-<h4>Presentation</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -46,25 +46,28 @@
                 <span asp-validation-for="ViewCount" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CategoryID" class="control-label"></label>
+                <label>Category</label>
                 <select asp-for="CategoryID" class="form-control" asp-items="@ViewBag.Categories"></select>
                 <span asp-validation-for="CategoryID" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <input type="file" id="PresentationFile" name="PresentationFile" class="form-control-file" onchange="updateFileName(this)" />
-
-            </div>
+     
             <div class="form-group">
                 <label asp-for="status" class="control-label"></label>
                 <select asp-for="status" class="form-control" asp-items="@ViewBag.StatusList"></select>
                 <span asp-validation-for="status" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="AuthorID" />
-
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="file" id="PresentationFile" name="PresentationFile" class="form-control-file" onchange="updateFileName(this)" />
+
             </div>
+            <div class="odsungora">
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </div>
+          
         </form>
     </div>
 </div>

@@ -1,13 +1,13 @@
 ﻿@model Dydaktycznie.Models.Presentation
+@using System.Security.Claims
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Prezentacaja:  @Html.DisplayFor(model => model.Title)</h1>
 
 <div>
-    <h4>Presentation</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -15,6 +15,12 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-2">
+            Author Email
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Author.Email)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Description)
@@ -53,7 +59,7 @@
             @Html.DisplayFor(model => model.status)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.FileName)
+            Download
         </dt>
 
 
@@ -67,15 +73,16 @@
                 <span>No file available</span>
             }
         </dd>
-        <dt class="col-sm-2">
-            Author Email
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Author.Email) <!-- Założyłem, że w modelu Quiz masz właściwość Author, która ma właściwość Email -->
-        </dd>
+        
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.PresentationID">Edit</a> |
+
+    @if (User.Identity.IsAuthenticated && Model.AuthorID == User.FindFirstValue(ClaimTypes.NameIdentifier))
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.PresentationID">Edit</a>
+    
+    }
+
     <a asp-action="Index">Back to List</a>
 </div>

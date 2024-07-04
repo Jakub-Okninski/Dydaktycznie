@@ -89,15 +89,8 @@ namespace Dydaktycznie.Controllers
 
             if (slidesCount != null)
             {
-                presentations = presentations.Where(p => p.SlidesCount == slidesCount);
+                presentations = presentations.Where(p => p.SlidesCount <= slidesCount);
             }
-
-
-            // Pobierz identyfikator zalogowanego użytkownika
-            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            // Przyjmując, że identyfikatorem zalogowanego użytkownika jest nazwa użytkownika
-
-           
 
             if (sortOrder == "title_desc")
             {
