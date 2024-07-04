@@ -62,16 +62,26 @@ namespace Dydaktycznie.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("QuizID,Title,Description")] Quiz quiz)
+        public async Task<IActionResult> Create([Bind("QuizID,Title,Description")] Quiz quiz, IFormFile photo)
         {
             if (ModelState.IsValid)
             {
+                if (photo != null && photo.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await photo.CopyToAsync(memoryStream);
+                        quiz.Photo = memoryStream.ToArray(); // Konwersja strumienia na tablicę bajtów i przypisanie do quiz.Photo
+                    }
+                }
+
                 _context.Add(quiz);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(quiz);
         }
+
 
         // GET: Quizs/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -97,7 +107,7 @@ namespace Dydaktycznie.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("QuizID,Title,Description")] Quiz quiz)
+        public async Task<IActionResult> Edit(int id, [Bind("QuizID,Title,Description,Photo")] Quiz quiz, IFormFile? photo)
         {
             if (id != quiz.QuizID)
             {
@@ -108,6 +118,14 @@ namespace Dydaktycznie.Controllers
             {
                 try
                 {
+                    if (photo != null && photo.Length > 0)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await photo.CopyToAsync(memoryStream);
+                            quiz.Photo = memoryStream.ToArray(); // Konwersja strumienia na tablicę bajtów i przypisanie do quiz.Photo
+                        }
+                    }
                     _context.Update(quiz);
                     await _context.SaveChangesAsync();
                 }
