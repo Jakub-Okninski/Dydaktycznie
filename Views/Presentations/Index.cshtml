@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Dydaktycznie.Models.Presentation>
+﻿@model PaginatedList<Dydaktycznie.Models.Presentation>
 
 @{
     ViewData["Title"] = "Index";
@@ -82,29 +82,35 @@
         </div>
     </form>
 </div>
+
+
+
+
+
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["TitleSortParam"]">@Html.DisplayNameFor(model => model.Title)</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TitleSortParam"]">Tytuł</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+               Opis
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParam"]">@Html.DisplayNameFor(model => model.CreationDate)</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParam"]">Data utworzenia</a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["SlidesCountSortParam"]">@Html.DisplayNameFor(model => model.SlidesCount)</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["SlidesCountSortParam"]">Ilość slajdów</a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["ViewCountSortParam"]">@Html.DisplayNameFor(model => model.ViewCount)</a>
+               Wyświetlenia
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParam"]">@Html.DisplayNameFor(model => model.Category.Name)</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParam"]">Kategoria</a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["StatusSortParam"]">@Html.DisplayNameFor(model => model.status)</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StatusSortParam"]">Status</a>
             </th>
             <th></th>
         </tr>
@@ -143,3 +149,23 @@
         }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["TitleSortParam"]"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   class="btn btn-default @(prevDisabled)">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["TitleSortParam"]"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   class="btn btn-default @(nextDisabled)">
+    Next
+</a>

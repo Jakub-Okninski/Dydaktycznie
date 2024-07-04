@@ -20,8 +20,8 @@ namespace Dydaktycznie.Controllers
             _context = context;
         }
 
-      
-        public async Task<IActionResult> Index(string? sortOrder, string? searchString, DateTime? startDate, DateTime? endDate, int? categoryId, Status? status, int? slidesCount)
+
+        public async Task<IActionResult> Index(string? sortOrder, string? searchString, DateTime? startDate, DateTime? endDate, int? categoryId, Status? status, int? slidesCount, string currentFilter, int? pageNumber)
         {
             ViewData["TitleSortParam"] = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
             ViewData["DateSortParam"] = sortOrder == "date_asc" ? "date_desc" : "date_asc";
@@ -32,12 +32,23 @@ namespace Dydaktycznie.Controllers
 
 
 
+            ViewData["CurrentSort"] = sortOrder;
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
             ViewData["CurrentFilter"] = searchString;
             ViewData["StartDateFilter"] = startDate;
             ViewData["EndDateFilter"] = endDate;
             ViewData["CategoryIdFilter"] = categoryId;
-            if(status!=null)
-            ViewData["StatusFilter"] = ((int)status).ToString();
+            if (status != null)
+                ViewData["StatusFilter"] = ((int)status).ToString();
             ViewData["SlidesCountFilter"] = slidesCount;
 
             // Initialize presentations query
@@ -59,7 +70,7 @@ namespace Dydaktycznie.Controllers
                 presentations = presentations.Where(p => p.CreationDate <= endDate);
             }
 
-            if (categoryId != null&& categoryId!=-1)
+            if (categoryId != null && categoryId != -1)
             {
                 presentations = presentations.Where(p => p.CategoryID == categoryId);
             }
@@ -136,8 +147,11 @@ namespace Dydaktycznie.Controllers
                                                         Text = s.ToString(),
                                                         Value = ((int)s).ToString()
                                                     }), "Value", "Text");
-            return View(await presentations.ToListAsync());
+
+            int pageSize = 3;
+            return View(await PaginatedList<Presentation>.CreateAsync(presentations.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
+ 
 
         // Pozostałe metody kontrolera (Create, Edit, Details, Delete) pozostają bez zmian.
 
