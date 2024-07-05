@@ -20,23 +20,9 @@ namespace Dydaktycznie.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var quizzes = await _context.Quizzes.ToListAsync();
-            return View(quizzes);
+            return View();
         }
-        public async Task<IActionResult> MiniQuiz(int id)
-        {
-            var quiz = await _context.Quizzes
-                .Include(q => q.QuizQuestions) 
-                    .ThenInclude(qq => qq.QuestionAnswers) 
-                .FirstOrDefaultAsync(q => q.QuizID == id);
-
-            if (quiz == null)
-            {
-                return NotFound();
-            }
-
-            return PartialView("MiniQuiz", quiz);
-        }
+   
 
 
         public IActionResult Privacy()
