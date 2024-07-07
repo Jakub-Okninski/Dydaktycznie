@@ -36,8 +36,6 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-         
-
                     @if (User.Identity.IsAuthenticated && item.AuthorID == User.FindFirstValue(ClaimTypes.NameIdentifier))
                     {
                         <a asp-action="Details" asp-route-id="@item.QuizID">Details</a>
@@ -51,8 +49,6 @@
                           <a asp-action="Details" asp-route-id="@item.QuizID">Details</a>
 
                     }
-
-
             </td>
         </tr>
 }

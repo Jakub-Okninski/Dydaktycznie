@@ -1,33 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using Dydaktycznie.Data;
 using Dydaktycznie.Models;
-using Dydaktycznie.Data;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Dydaktycznie.Controllers
 {
     public class QuizQuestionsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
         public QuizQuestionsController(ApplicationDbContext context)
         {
             _context = context;
         }
-
-        // GET: QuizQuestions
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.QuizQuestions.Include(q => q.Quiz);
             return View(await applicationDbContext.ToListAsync());
         }
-
-        // GET: QuizQuestions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -63,45 +52,18 @@ namespace Dydaktycznie.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("QuizID,Question,QuestionAnswers")] QuizQuestion quizQuestion)
         {
-
-            System.Diagnostics.Debug.WriteLine("Dipda");
-
             if (ModelState.IsValid)
             {
-                System.Diagnostics.Debug.WriteLine($"Error in gfdgfdg");
-
-        
-
                 _context.QuizQuestions.Add(quizQuestion);
                 await _context.SaveChangesAsync();
-
-                // Przekierowanie do szczegółów quizu lub innej strony
                 return RedirectToAction("Details", "Quiz", new { id = quizQuestion.QuizID });
             }
-            else
-            {
-                foreach (var state in ModelState)
-                {
-                    foreach (var error in state.Value.Errors)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Error in {state.Key}: {error.ErrorMessage}");
-                    }
-                }
-            }
-
-            // Return the view with the same model to display validation errors
+      
             return View(quizQuestion);
         }
 
-
-
-
-
-
-        // GET: QuizQuestions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            System.Diagnostics.Debug.WriteLine($"Edas  Edycja");
 
             if (id == null)
             {
@@ -113,17 +75,14 @@ namespace Dydaktycznie.Controllers
                 .FirstOrDefaultAsync(m => m.QuizQuestionID == id);
             if (quizQuestion == null)
             {
-                System.Diagnostics.Debug.WriteLine("dasdasda llalala Edycja");
 
                 return NotFound();
             }
-            System.Diagnostics.Debug.WriteLine($"Edas  dsa2343Edycja");
             System.Diagnostics.Debug.WriteLine(quizQuestion.QuizID);
 
             return View(quizQuestion);
         }
 
-        // POST: QuizQuestions/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("QuizQuestionID,QuizID,Question,QuestionAnswers")] QuizQuestion quizQuestion)
@@ -156,7 +115,6 @@ namespace Dydaktycznie.Controllers
             return View(quizQuestion);
         }
 
-        // GET: QuizQuestions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -176,7 +134,6 @@ namespace Dydaktycznie.Controllers
             return View(quizQuestion);
         }
 
-        // POST: QuizQuestions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -189,7 +146,7 @@ namespace Dydaktycznie.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
-     
+
         private bool QuizQuestionExists(int id)
         {
             return _context.QuizQuestions.Any(e => e.QuizQuestionID == id);

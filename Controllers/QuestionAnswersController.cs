@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Dydaktycznie.Data;
+using Dydaktycznie.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Dydaktycznie.Data;
-using Dydaktycznie.Models;
 
 namespace Dydaktycznie.Controllers
 {
@@ -18,15 +14,11 @@ namespace Dydaktycznie.Controllers
         {
             _context = context;
         }
-
-        // GET: QuestionAnswers
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.QuestionAnswers.Include(q => q.QuizQuestion);
             return View(await applicationDbContext.ToListAsync());
         }
-
-        // GET: QuestionAnswers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -44,17 +36,12 @@ namespace Dydaktycznie.Controllers
 
             return View(questionAnswer);
         }
-
-        // GET: QuestionAnswers/Create
         public IActionResult Create()
         {
             ViewData["QuizQuestionID"] = new SelectList(_context.QuizQuestions, "QuizQuestionID", "QuizQuestionID");
             return View();
         }
 
-        // POST: QuestionAnswers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("QuestionAnswerID,QuizQuestionID,Answer,Correct")] QuestionAnswer questionAnswer)
@@ -68,8 +55,6 @@ namespace Dydaktycznie.Controllers
             ViewData["QuizQuestionID"] = new SelectList(_context.QuizQuestions, "QuizQuestionID", "QuizQuestionID", questionAnswer.QuizQuestionID);
             return View(questionAnswer);
         }
-
-        // GET: QuestionAnswers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -86,9 +71,6 @@ namespace Dydaktycznie.Controllers
             return View(questionAnswer);
         }
 
-        // POST: QuestionAnswers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("QuestionAnswerID,QuizQuestionID,Answer,Correct")] QuestionAnswer questionAnswer)
@@ -121,8 +103,6 @@ namespace Dydaktycznie.Controllers
             ViewData["QuizQuestionID"] = new SelectList(_context.QuizQuestions, "QuizQuestionID", "QuizQuestionID", questionAnswer.QuizQuestionID);
             return View(questionAnswer);
         }
-
-        // GET: QuestionAnswers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -140,18 +120,11 @@ namespace Dydaktycznie.Controllers
 
             return View(questionAnswer);
         }
-
-        // POST: QuestionAnswers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var questionAnswer = await _context.QuestionAnswers.FindAsync(id);
-
-
-           
-
-
 
             if (questionAnswer != null)
             {

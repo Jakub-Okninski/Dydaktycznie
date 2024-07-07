@@ -11,11 +11,11 @@ namespace Dydaktycznie.Models
         public int SlidesCount { get; set; }
         public int ViewCount { get; set; }
         public int CategoryID { get; set; }
-        public Category? Category { get; set; }  
+        public Category? Category { get; set; }
         public Status status { get; set; }
-        public string? FileName { get; set; } 
-        public IdentityUser? Author { get; set; } 
-        public string? AuthorID { get; set; } 
+        public string? FileName { get; set; }
+        public IdentityUser? Author { get; set; }
+        public string? AuthorID { get; set; }
 
     }
     public enum Status
@@ -24,6 +24,6 @@ namespace Dydaktycznie.Models
         published,
         hidden,
     }
-   
-    
+
+
 }

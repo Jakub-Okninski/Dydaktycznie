@@ -43,16 +43,16 @@
                 {
                     foreach (var category in (SelectList)ViewData["Categories"])
                     {
-                            @if (category.Value.ToString() == ViewData["CategoryIdFilter"]?.ToString())
-                            {
-                                <option selected value="@category.Value" )>@category.Text</option>
+                        @if (category.Value.ToString() == ViewData["CategoryIdFilter"]?.ToString())
+                        {
+                            <option selected value="@category.Value" )>@category.Text</option>
 
-                            }
-                            @if (category.Value.ToString() != ViewData["CategoryIdFilter"]?.ToString())
-                            {
-                                <option value="@category.Value" )>@category.Text</option>
+                        }
+                        @if (category.Value.ToString() != ViewData["CategoryIdFilter"]?.ToString())
+                        {
+                            <option value="@category.Value" )>@category.Text</option>
 
-                            }
+                        }
                     }
                 }
             </select>
@@ -60,44 +60,32 @@
             <div>
                 Status:
                 <br/>
-
                 <select id="status" name="status" >
                     <option value="">All</option>
                     @if (ViewData["Statuses"] != null)
                     {
                         foreach (var status in (SelectList)ViewData["Statuses"])
                         {
-
-
                             @if (status.Value == ViewData["StatusFilter"])
                             {
                                 <option selected value="@status.Value")>@status.Text</option>
-
                             }
                             @if (status.Value != ViewData["StatusFilter"])
                             {
-
                                 <option value="@status.Value")>@status.Text</option>
-
                             }
-
                         }
                     }
                 </select>
             </div>
         </div>
-                <div>
-                    <button type="submit">Filtruj</button>
-                    <a asp-action="Index">Czyść</a>
-                </div>
+            <div>
+                <button type="submit">Filtruj</button>
+                <a asp-action="Index">Czyść</a>
+            </div>
         <div>
     </form>
 </div>
-
-
-
-
-
 
 <table class="table">
     <thead>
@@ -158,12 +146,10 @@
                         <a asp-action="Details" asp-route-id="@item.PresentationID">Szczegóły</a>
                         <a asp-action="Edit" asp-route-id="@item.PresentationID">Edycja</a>
                         <a asp-action="Delete" asp-route-id="@item.PresentationID">Usuń</a>
-
                     }
                     else
                     {
                         <a asp-action="Details" asp-route-id="@item.PresentationID">Szczegóły</a>
-
                     }
                 </td>
             </tr>

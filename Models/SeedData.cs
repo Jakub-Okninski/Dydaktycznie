@@ -11,10 +11,9 @@ namespace Dydaktycznie.Models
                 serviceProvider.GetRequiredService<
                     DbContextOptions<ApplicationDbContext>>()))
             {
-                // Look for any movies.
                 if (context.Categorys.Any())
                 {
-                    return;   // DB has been seeded
+                    return;   
                 }
                 context.Categorys.AddRange(
                     new Category
@@ -32,4 +31,3 @@ namespace Dydaktycznie.Models
         }
     }
 }
- 

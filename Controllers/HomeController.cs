@@ -15,10 +15,9 @@ namespace Dydaktycznie.Controllers
         {
             _logger = logger;
             _context = context;
-
         }
 
-        public async Task<IActionResult> Index(string ?authorSearchString, string? titleSearchString)
+        public async Task<IActionResult> Index(string? authorSearchString, string? titleSearchString)
         {
 
             ViewData["TitleFilter"] = titleSearchString;
@@ -38,12 +37,8 @@ namespace Dydaktycznie.Controllers
 
             return View(await quizzes.ToListAsync());
         }
-   
-  
 
-
-
-    public IActionResult Privacy()
+        public IActionResult Privacy()
         {
             return View();
         }

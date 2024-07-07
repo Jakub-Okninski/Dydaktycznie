@@ -9,9 +9,6 @@
 <h3>Czy na pewno chcesz to usunąć?</h3>
 <div>
     <hr />
-
-
-
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.QuizQuestion.Question)
@@ -38,10 +35,7 @@
                 <span class="text-danger">Niepoprawna</span>
             }
         </dd>
-
-       
     </dl>
-    
     <form asp-action="Delete">
         <input type="hidden" asp-for="QuestionAnswerID" />
         <input type="submit" value="Usuń Odpowiedź" class="btn btn-danger" /> |
