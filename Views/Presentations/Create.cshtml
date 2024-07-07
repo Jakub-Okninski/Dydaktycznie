@@ -1,0 +1,91 @@
+﻿@model Dydaktycznie.Models.Presentation
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Generuj Prezentacje</h1>
+<link rel="stylesheet" href="/css/quiz.css" />
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <input type="text" asp-for="AuthorID" hidden value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
+
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group" hidden>
+                <label asp-for="FileName" class="control-label"></label>
+                <input asp-for="FileName" class="form-control" disabled />
+                <span asp-validation-for="FileName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" hidden>
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" >
+                <label>Category</label>
+                <select asp-for="CategoryID" class="form-control" asp-items="@ViewBag.Categories"></select>
+                <span asp-validation-for="CategoryID" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" hidden>
+                <label asp-for="CreationDate" class="control-label"></label>
+                <input asp-for="CreationDate" class="form-control" disabled />
+                <span asp-validation-for="CreationDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" hidden>
+                <label asp-for="SlidesCount" class="control-label"></label>
+                <input asp-for="SlidesCount" class="form-control" disabled />
+                <span asp-validation-for="SlidesCount" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" hidden>
+                <label asp-for="ViewCount" class="control-label"></label>
+                <input asp-for="ViewCount" class="form-control" disabled />
+                <span asp-validation-for="ViewCount" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" hidden>
+                <label asp-for="status" class="control-label"></label>
+                <input asp-for="status" class="form-control" disabled />
+                <span asp-validation-for="status" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <input required type="file" id="PresentationFile" name="PresentationFile" class="form-control-file" onchange="updateFileName(this)" />
+            </div>
+            <div class="odsungora">
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </div>
+       
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function updateFileName(input) {
+            var fileName = input.files[0].name;
+            document.getElementById("FileName").value = fileName;
+        }
+    </script>
+}
+

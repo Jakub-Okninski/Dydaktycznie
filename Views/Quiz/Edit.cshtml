@@ -1,0 +1,123 @@
+﻿@model Dydaktycznie.Models.Quiz
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edytuj Quiz</h1>
+<link rel="stylesheet" href="/css/quiz.css" />
+
+
+<hr />
+<div class="row">
+    <div >
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="QuizID" />
+            <input type="hidden" asp-for="Photo" />
+            <input type="hidden" asp-for="AuthorID" />
+
+            <div class="grupowanie">
+               <div>
+                    <div class="form-group">
+                        <label asp-for="Title" class="control-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <input type="file" id="Photo" name="photo" class="form-control-file" />
+
+                    <div class="odsungora">
+                        <div class="form-group">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                        </div>
+
+                    </div>                 
+               </div>    
+                <div class="form-group">
+                    @if (Model.Photo != null && Model.Photo.Length > 0)
+                    {
+                        <img src="data:image/png;base64,@Convert.ToBase64String(Model.Photo)" class="img-fluid" />
+                    }
+                    <span asp-validation-for="Photo" class="text-danger"></span>
+                </div>
+            </div>
+          
+        </form>
+    </div>
+</div>
+
+<hr />
+
+
+
+@if (Model.QuizQuestions != null && Model.QuizQuestions.Any())
+{
+    <div>
+        <h4>Pytania:</h4>
+        <hr />
+       
+        @foreach (var question in Model.QuizQuestions)
+        {
+            <div class="grupowanie">
+
+                <div>
+                    <h5>Pytanie: @question.Question</h5>
+                <ul>
+                    @foreach (var answer in question.QuestionAnswers)
+                    {
+                        <li>Odpoiwedź: 
+                            @answer.Answer @if (answer.Correct)
+                            {
+                                <span>(Correct)</span>
+                            }
+                        </li>
+                    }
+                </ul>
+                    </div>
+                <form asp-action="DeleteQuizQuestions" asp-route-id="@question.QuizQuestionID" method="post">
+                    <input type="submit" value="Delete" class="btn btn-danger" />
+                </form>
+                <div class="odsun">
+                    <a asp-controller="QuizQuestions" class="btn btn-primary" asp-action="Edit" asp-route-id="@question.QuizQuestionID">Edit</a>
+
+                    </div>
+
+
+                <hr />
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No questions found for this quiz.</p>
+}
+
+
+
+
+
+
+<div>
+    <h4>Add Question</h4>
+    <form asp-controller="QuizQuestions" asp-action="Create" method="get">
+        <input type="hidden" name="quizId" value="@Model.QuizID" />
+        <button type="submit" class="btn btn-primary">Add Question</button>
+    </form>
+</div>
+<hr />
+
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

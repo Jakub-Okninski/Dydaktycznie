@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Dydaktycznie.Models.Quiz>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Moje Quizy";
+}
+
+<h1>Moje Quizy</h1>
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <h4><a asp-action="Create">Stwórz Nowy Quiz</a></h4>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+               Tytuł
+            </th>
+            <th>
+               Opis
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                    @if (User.Identity.IsAuthenticated && item.AuthorID == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                    {
+                        <a asp-action="Details" asp-route-id="@item.QuizID">Details</a>
+
+                        <a asp-action="Edit" asp-route-id="@item.QuizID">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.QuizID">Delete</a>
+
+                    }
+                    else
+                    {
+                          <a asp-action="Details" asp-route-id="@item.QuizID">Details</a>
+
+                    }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

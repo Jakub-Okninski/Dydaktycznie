@@ -1,0 +1,54 @@
+﻿@using System.Security.Claims
+@model Dydaktycznie.Models.Quiz
+
+@{
+    ViewData["Title"] = "Create";
+}
+<link rel="stylesheet" href="/css/quiz.css" />
+
+<h1>Stwórz Quiz</h1>
+
+<h4>Quiz</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="AuthorID" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="odsungora">
+                <div class="form-group">
+                    <input type="file" id="Photo" name="photo" class="form-control-file" />
+                    <span asp-validation-for="Photo" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="odsungora">
+
+            <div class="form-group">
+                <input type="submit" value="Stwórz Quiz" class="btn btn-primary" />
+            </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div class="form-group">
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

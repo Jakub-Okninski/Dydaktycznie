@@ -1,0 +1,178 @@
+﻿@model PaginatedList<Dydaktycznie.Models.Presentation>
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Prezentacje</h1>
+@if (SignInManager.IsSignedIn(User))
+{
+    <h4><a asp-action="Create">Stwórz Nowy Quiz</a></h4>
+}
+<link rel="stylesheet" href="/css/quiz.css" />
+<div>
+    <form asp-controller="Presentations" asp-action="Index" method="get">
+       
+        <div class="grupowanie">
+            <div>
+                Tytuł:
+                <br />
+                <input type="text" id="searchString" name="searchString" value="@ViewData["CurrentFilter"]" />
+            </div>
+            <div>
+                <label for="startDate">Od: </label>
+                <input type="date" id="startDate" name="startDate" value="@((DateTime?)ViewData["StartDateFilter"] != null ? ((DateTime)ViewData["StartDateFilter"]).ToString("yyyy-MM-dd") : "")" /><br/>
+                <label for="endDate">Do: </label>
+                <input type="date" id="endDate" name="endDate" value="@((DateTime?)ViewData["EndDateFilter"] != null ? ((DateTime)ViewData["EndDateFilter"]).ToString("yyyy-MM-dd") : "")" />
+            </div>
+         
+            <div>
+                Max Slajd:<br />
+                <input type="number" id="slidesCount" name="slidesCount" value="@ViewData["SlidesCountFilter"]" />
+            </div>
+            <div>
+                Kategoria:
+                <br />
+            <select id="categoryId" name="categoryId" >
+                <option value="">All</option>
+                @if (ViewData["Categories"] != null)
+                {
+                    foreach (var category in (SelectList)ViewData["Categories"])
+                    {
+                        @if (category.Value.ToString() == ViewData["CategoryIdFilter"]?.ToString())
+                        {
+                            <option selected value="@category.Value" )>@category.Text</option>
+
+                        }
+                        @if (category.Value.ToString() != ViewData["CategoryIdFilter"]?.ToString())
+                        {
+                            <option value="@category.Value" )>@category.Text</option>
+
+                        }
+                    }
+                }
+            </select>
+            </div>
+            <div>
+                Status:
+                <br/>
+                <select id="status" name="status" >
+                    <option value="">All</option>
+                    @if (ViewData["Statuses"] != null)
+                    {
+                        foreach (var status in (SelectList)ViewData["Statuses"])
+                        {
+                            @if (status.Value == ViewData["StatusFilter"])
+                            {
+                                <option selected value="@status.Value")>@status.Text</option>
+                            }
+                            @if (status.Value != ViewData["StatusFilter"])
+                            {
+                                <option value="@status.Value")>@status.Text</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+            <div>
+                <button type="submit">Filtruj</button>
+                <a asp-action="Index">Czyść</a>
+            </div>
+        <div>
+    </form>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TitleSortParam"]">Tytuł</a>
+            </th>
+            <th>
+               Opis
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParam"]">Data utworzenia</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["SlidesCountSortParam"]">Ilość slajdów</a>
+            </th>
+            <th>
+               Wyświetlenia
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParam"]">Kategoria</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StatusSortParam"]">Status</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreationDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SlidesCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ViewCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.status)
+                </td>
+                <td>
+        
+                    @if (User.Identity.IsAuthenticated && item.AuthorID == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                    {
+                        <a asp-action="Details" asp-route-id="@item.PresentationID">Szczegóły</a>
+                        <a asp-action="Edit" asp-route-id="@item.PresentationID">Edycja</a>
+                        <a asp-action="Delete" asp-route-id="@item.PresentationID">Usuń</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Details" asp-route-id="@item.PresentationID">Szczegóły</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["TitleSortParam"]"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   class="btn btn-default @(prevDisabled)">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["TitleSortParam"]"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   class="btn btn-default @(nextDisabled)">
+    Next
+</a>
